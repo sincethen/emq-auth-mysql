@@ -67,7 +67,12 @@ connect(Options) ->
     mysql:start_link(Options).
 
 query(Sql, Params, Client) ->
-    ecpool:with_client(?APP, fun(C) -> mysql:query(C, Sql, replvar(Params, Client)) end).
+    ecpool:with_client(?APP, fun(C) -> mysql:query(C, spec_db_ahead_of_table(Sql), replvar(Params, Client)) end).
+
+%% specific db name ahead of table for mariadb 10.2+
+spec_db_ahead_of_table(Sql) ->
+    {ok, DB} = application:get_env(?APP, database),
+    re:replace(Sql,"from ", "from " ++ DB ++ ".", [{return,list}]).
 
 replvar(Params, Client) ->
     replvar(Params, Client, []).

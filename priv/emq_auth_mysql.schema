@@ -20,7 +20,7 @@
   {datatype, string}
 ]}.
 
-{mapping, "auth.mysql.database", "emq_auth_mysql.server", [
+{mapping, "auth.mysql.database", "emq_auth_mysql.database", [
   {default, "mqtt"},
   {datatype, string}
 ]}.
@@ -37,14 +37,15 @@
   Pool = cuttlefish:conf_get("auth.mysql.pool", Conf),
   Username = cuttlefish:conf_get("auth.mysql.username", Conf),
   Passwd = cuttlefish:conf_get("auth.mysql.password", Conf),
-  DB = cuttlefish:conf_get("auth.mysql.database", Conf),
+%% remove db info from connection options for mariadb 10.2+
+%  DB = cuttlefish:conf_get("auth.mysql.database", Conf),
   [{pool_size, Pool},
    {auto_reconnect, 1},
    {host, MyHost},
    {port, MyPort},
    {user, Username},
    {password, Passwd},
-   {database, DB},
+%   {database, DB},
    {encoding, utf8},
    {keep_alive, true}]
 end}.
